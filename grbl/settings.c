@@ -24,6 +24,60 @@
 
 settings_t settings;
 
+const __flash settings_t defaults = {
+    .pulse_microseconds = DEFAULT_STEP_PULSE_MICROSECONDS,
+    .stepper_idle_lock_time = DEFAULT_STEPPER_IDLE_LOCK_TIME,
+    .step_invert_mask = DEFAULT_STEPPING_INVERT_MASK,
+    .dir_invert_mask = DEFAULT_DIRECTION_INVERT_MASK,
+    .status_report_mask = DEFAULT_STATUS_REPORT_MASK,
+    .junction_deviation = DEFAULT_JUNCTION_DEVIATION,
+    .arc_tolerance = DEFAULT_ARC_TOLERANCE,
+    .rpm_max = DEFAULT_SPINDLE_RPM_MAX,
+    .rpm_min = DEFAULT_SPINDLE_RPM_MIN,
+    .homing_dir_mask = DEFAULT_HOMING_DIR_MASK,
+    .homing_feed_rate = DEFAULT_HOMING_FEED_RATE,
+    .homing_seek_rate = DEFAULT_HOMING_SEEK_RATE,
+    .homing_debounce_delay = DEFAULT_HOMING_DEBOUNCE_DELAY,
+    .homing_pulloff = DEFAULT_HOMING_PULLOFF,
+    .flags = (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) |
+             (DEFAULT_LASER_MODE << BIT_LASER_MODE) |
+             (DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) |
+             (DEFAULT_HARD_LIMIT_ENABLE << BIT_HARD_LIMIT_ENABLE) |
+             (DEFAULT_HOMING_ENABLE << BIT_HOMING_ENABLE) |
+             (DEFAULT_SOFT_LIMIT_ENABLE << BIT_SOFT_LIMIT_ENABLE) |
+             (DEFAULT_INVERT_LIMIT_PINS << BIT_INVERT_LIMIT_PINS) |
+             (DEFAULT_INVERT_PROBE_PIN << BIT_INVERT_PROBE_PIN),
+    .steps_per_mm[AXIS_1] = DEFAULT_AXIS1_STEPS_PER_UNIT,
+    .steps_per_mm[AXIS_2] = DEFAULT_AXIS2_STEPS_PER_UNIT,
+    .steps_per_mm[AXIS_3] = DEFAULT_AXIS3_STEPS_PER_UNIT,
+    .max_rate[AXIS_1] = DEFAULT_AXIS1_MAX_RATE,
+    .max_rate[AXIS_2] = DEFAULT_AXIS2_MAX_RATE,
+    .max_rate[AXIS_3] = DEFAULT_AXIS3_MAX_RATE,
+    .acceleration[AXIS_1] = DEFAULT_AXIS1_ACCELERATION,
+    .acceleration[AXIS_2] = DEFAULT_AXIS2_ACCELERATION,
+    .acceleration[AXIS_3] = DEFAULT_AXIS3_ACCELERATION,
+    .max_travel[AXIS_1] = (-DEFAULT_AXIS1_MAX_TRAVEL),
+    .max_travel[AXIS_2] = (-DEFAULT_AXIS2_MAX_TRAVEL),
+    .max_travel[AXIS_3] = (-DEFAULT_AXIS3_MAX_TRAVEL),
+#if N_AXIS > 3
+    .steps_per_mm[AXIS_4] = DEFAULT_AXIS4_STEPS_PER_UNIT,
+    .max_rate[AXIS_4] = DEFAULT_AXIS4_MAX_RATE,
+    .acceleration[AXIS_4] = DEFAULT_AXIS4_ACCELERATION,
+    .max_travel[AXIS_4] = (-DEFAULT_AXIS4_MAX_TRAVEL),
+#endif
+#if N_AXIS > 4
+    .steps_per_mm[AXIS_5] = DEFAULT_AXIS5_STEPS_PER_UNIT,
+    .max_rate[AXIS_5] = DEFAULT_AXIS5_MAX_RATE,
+    .acceleration[AXIS_5] = DEFAULT_AXIS5_ACCELERATION,
+    .max_travel[AXIS_5] = (-DEFAULT_AXIS5_MAX_TRAVEL),
+#endif
+#if N_AXIS > 5
+    .steps_per_mm[AXIS_6] = DEFAULT_AXIS6_STEPS_PER_UNIT,
+    .max_rate[AXIS_6] = DEFAULT_AXIS6_MAX_RATE,
+    .acceleration[AXIS_6] = DEFAULT_AXIS6_ACCELERATION,
+    .max_travel[AXIS_6] = (-DEFAULT_AXIS6_MAX_TRAVEL),
+#endif
+};
 
 // Method to store startup lines into EEPROM
 void settings_store_startup_line(uint8_t n, char *line)
@@ -68,64 +122,7 @@ void write_global_settings()
 // Method to restore EEPROM-saved Grbl global settings back to defaults.
 void settings_restore(uint8_t restore_flag) {
   if (restore_flag & SETTINGS_RESTORE_DEFAULTS) {
-    settings.pulse_microseconds = DEFAULT_STEP_PULSE_MICROSECONDS;
-    settings.stepper_idle_lock_time = DEFAULT_STEPPER_IDLE_LOCK_TIME;
-    settings.step_invert_mask = DEFAULT_STEPPING_INVERT_MASK;
-    settings.dir_invert_mask = DEFAULT_DIRECTION_INVERT_MASK;
-    settings.status_report_mask = DEFAULT_STATUS_REPORT_MASK;
-    settings.junction_deviation = DEFAULT_JUNCTION_DEVIATION;
-    settings.arc_tolerance = DEFAULT_ARC_TOLERANCE;
-
-    settings.rpm_max = DEFAULT_SPINDLE_RPM_MAX;
-    settings.rpm_min = DEFAULT_SPINDLE_RPM_MIN;
-
-    settings.homing_dir_mask = DEFAULT_HOMING_DIR_MASK;
-    settings.homing_feed_rate = DEFAULT_HOMING_FEED_RATE;
-    settings.homing_seek_rate = DEFAULT_HOMING_SEEK_RATE;
-    settings.homing_debounce_delay = DEFAULT_HOMING_DEBOUNCE_DELAY;
-    settings.homing_pulloff = DEFAULT_HOMING_PULLOFF;
-
-    settings.flags = 0;
-    if (DEFAULT_REPORT_INCHES) { settings.flags |= BITFLAG_REPORT_INCHES; }
-    if (DEFAULT_LASER_MODE) { settings.flags |= BITFLAG_LASER_MODE; }
-    if (DEFAULT_INVERT_ST_ENABLE) { settings.flags |= BITFLAG_INVERT_ST_ENABLE; }
-    if (DEFAULT_HARD_LIMIT_ENABLE) { settings.flags |= BITFLAG_HARD_LIMIT_ENABLE; }
-    if (DEFAULT_HOMING_ENABLE) { settings.flags |= BITFLAG_HOMING_ENABLE; }
-    if (DEFAULT_SOFT_LIMIT_ENABLE) { settings.flags |= BITFLAG_SOFT_LIMIT_ENABLE; }
-    if (DEFAULT_INVERT_LIMIT_PINS) { settings.flags |= BITFLAG_INVERT_LIMIT_PINS; }
-    if (DEFAULT_INVERT_PROBE_PIN) { settings.flags |= BITFLAG_INVERT_PROBE_PIN; }
-
-    settings.steps_per_mm[AXIS_1] = DEFAULT_AXIS1_STEPS_PER_UNIT;
-    settings.steps_per_mm[AXIS_2] = DEFAULT_AXIS2_STEPS_PER_UNIT;
-    settings.steps_per_mm[AXIS_3] = DEFAULT_AXIS3_STEPS_PER_UNIT;
-    settings.max_rate[AXIS_1] = DEFAULT_AXIS1_MAX_RATE;
-    settings.max_rate[AXIS_2] = DEFAULT_AXIS2_MAX_RATE;
-    settings.max_rate[AXIS_3] = DEFAULT_AXIS3_MAX_RATE;
-    settings.acceleration[AXIS_1] = DEFAULT_AXIS1_ACCELERATION;
-    settings.acceleration[AXIS_2] = DEFAULT_AXIS2_ACCELERATION;
-    settings.acceleration[AXIS_3] = DEFAULT_AXIS3_ACCELERATION;
-    settings.max_travel[AXIS_1] = (-DEFAULT_AXIS1_MAX_TRAVEL);
-    settings.max_travel[AXIS_2] = (-DEFAULT_AXIS2_MAX_TRAVEL);
-    settings.max_travel[AXIS_3] = (-DEFAULT_AXIS3_MAX_TRAVEL);
-    #if N_AXIS > 3
-      settings.steps_per_mm[AXIS_4] = DEFAULT_AXIS4_STEPS_PER_UNIT;
-      settings.max_rate[AXIS_4] = DEFAULT_AXIS4_MAX_RATE;
-      settings.acceleration[AXIS_4] = DEFAULT_AXIS4_ACCELERATION;
-      settings.max_travel[AXIS_4] = (-DEFAULT_AXIS4_MAX_TRAVEL);
-    #endif
-    #if N_AXIS > 4
-      settings.steps_per_mm[AXIS_5] = DEFAULT_AXIS5_STEPS_PER_UNIT;
-      settings.max_rate[AXIS_5] = DEFAULT_AXIS5_MAX_RATE;
-      settings.acceleration[AXIS_5] = DEFAULT_AXIS5_ACCELERATION;
-      settings.max_travel[AXIS_5] = (-DEFAULT_AXIS5_MAX_TRAVEL);
-    #endif
-    #if N_AXIS > 5
-      settings.steps_per_mm[AXIS_6] = DEFAULT_AXIS6_STEPS_PER_UNIT;
-      settings.max_rate[AXIS_6] = DEFAULT_AXIS6_MAX_RATE;
-      settings.acceleration[AXIS_6] = DEFAULT_AXIS6_ACCELERATION;
-      settings.max_travel[AXIS_6] = (-DEFAULT_AXIS6_MAX_TRAVEL);
-    #endif
-
+    settings = defaults;
     write_global_settings();
   }
 
