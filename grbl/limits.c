@@ -200,7 +200,6 @@ uint8_t limits_get_state()
     #endif
     for (idx=0; idx<N_AXIS; idx++) {
       pin = *max_limit_pins[idx] & (1<<max_limit_bits[idx]);
-      pin = !!pin;
       pin = !pin;
       #ifdef INVERT_MAX_LIMIT_PIN_MASK
         if (bit_istrue(INVERT_MAX_LIMIT_PIN_MASK, bit(idx))) { pin = !pin; }
@@ -209,7 +208,6 @@ uint8_t limits_get_state()
         limit_state_max |= (1 << idx);
       }
       pin = *min_limit_pins[idx] & (1<<min_limit_bits[idx]);
-      pin = !!pin;
       pin = !pin;
       #ifdef INVERT_MIN_LIMIT_PIN_MASK
         if (bit_istrue(INVERT_MIN_LIMIT_PIN_MASK, bit(idx))) { pin = !pin; }
