@@ -454,6 +454,12 @@
 #endif
 
 #ifdef DEFAULTS_RAMPS_BOARD
+  // Generic conservative settings for a RAMP CNC machine. You must update these yourself. 
+  // Keep in mind that Grbl is highly efficient and settings can be significantly different.
+  // Especially when optimizing for a different CNC task like going from 3d printing to 
+  // CNC milling or laser cutting. Unlike Marlin, these defaults are only applied when the 
+  // EEPROM is explicitly wiped, either by a `$RST=*` command or Grbl detecting a settings
+  // version type change (not frequent).
   #define MICROSTEPS_AXIS1 4     // Microstepping = 1/4 pas
   #define STEP_REVS_AXIS1 200    // Moteurs à 200 pas par tour
   #define UNIT_PER_REV_AXIS1 2.0 // 2mm
@@ -511,10 +517,10 @@
   #define DEFAULT_INVERT_ST_ENABLE 0 // false
   #define DEFAULT_INVERT_LIMIT_PINS 0 // false
   #define DEFAULT_SOFT_LIMIT_ENABLE 1 // true
-  #define DEFAULT_HARD_LIMIT_ENABLE 0  // false
+  #define DEFAULT_HARD_LIMIT_ENABLE 0 // false
   #define DEFAULT_INVERT_PROBE_PIN 0 // false
   #define DEFAULT_LASER_MODE 0 // false
-  #define DEFAULT_HOMING_ENABLE 1  // true
+  #define DEFAULT_HOMING_ENABLE 1 // true
   #define DEFAULT_HOMING_DIR_MASK 0 // move positive dir
   #define DEFAULT_HOMING_FEED_RATE 100.0 // mm/min
   #define DEFAULT_HOMING_SEEK_RATE 500.0 // mm/min
