@@ -510,7 +510,7 @@ void report_build_info(char *line)
   serial_write('V'); // Variable spindle standard.
   serial_write('N'); // Line number reporting standard.
   serial_write('M'); // M7 mist coolant standard.
-  serial_write('+'); // Safety door support standard.
+  serial_write('G'); // Safety door support standard.
   #ifdef COREXY
     serial_write('C');
   #endif
