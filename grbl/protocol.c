@@ -237,6 +237,10 @@ void protocol_exec_rt_system()
         // the user and a GUI time to do what is needed before resetting, like killing the
         // incoming stream. The same could be said about soft limits. While the position is not
         // lost, continued streaming could cause a serious crash if by chance it gets executed.
+        if (sys_rt_exec_state & EXEC_STATUS_REPORT) {
+          report_realtime_status();
+          system_clear_exec_state_flag(EXEC_STATUS_REPORT);
+        }
       } while (bit_isfalse(sys_rt_exec_state,EXEC_RESET));
     }
     system_clear_exec_alarm(); // Clear alarm
