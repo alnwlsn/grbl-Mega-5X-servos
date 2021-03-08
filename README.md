@@ -1,4 +1,16 @@
+I needed to contol a bunch of motors and stuff for a project, and Grbl / G code seemed like a good way to do it. However, grbl doesn't have everything I want, so I decided to add it myself. This is for the old standby of an Arduino Mega and RAMPS 1.4 board.
 
+One of those is servos. Grbl is really good at controlling stepper motors, but I'd like to also add on some regualr hobby servos for not as presise stuff. First, I need to generate the PWM signals that the servos expect. One way to do this is by using hardware PWM, and the hardware timers, on their respective pins. But, grbl already uses some hardware timers, and some of the special pins are already hardwired to other stuff on the RAMPS board. I decided to go the other way and do something like (I think) the Arduino Servo library does. A table of pulse timings for each servo channel is used to set a hardware timer (TIMER5 which is unused in Grbl on the Mega), the timer triggers an interrupt, and the timer interrupt ISR is used to change a regular pin and set up the timer again using the next entry in the table. The longest pulse my servos respond to is about 2500us, so for a regular period of 20ms that the servo expects its signal, that gives me enough room to run up to 8 servos. 
+
+Ideally, these would be added as extra machine axes so they could be used along the steppers inside a regular gcode move, but I couldn't be bothered to figure out how to hack grbl for yet more axes, so I implemented some extra M codes instead. Within the codes I added, I reused some of the letters, but these don't affect the matching letters for the stepper axes:
+
+* M96 - sets the servo position immediately when issued. Works like G0.
+  * Usage: **M95 An Bn Cn Dn Wn Xn Yn Zn** 
+    * where A B C D E W X Y Z refer to the corresponding servo (do not include any servo you don't want to change), and n is the servo position (from 0 to 499 - actual angle this refers to on your servo depends on the type of servo)  
+* M97 - Starts servo moving smoothly from current position to new position. Works like G1. Non-blocking.
+  * Usage: **M95 An Bn Cn Dn Wn Xn Yn Zn Ts** 
+    * where A B C D E W X Y Z refer to the corresponding servo, n is the servo position, and T is the time of the move, in seconds. This timing uses the time base of the servo signal period, and is therefore completely isolated from the rest of Grbl's stepper control functions. It more or less does the servo move in the background.
+* M98 - works exactly the same as M97, but instead of starting when the command is issued, it starts with the next G command issued. This makes it possible to (roughly) cordinate motion with a move in the stepper axes (but you need to figure out the correct timings yourself).
 
 ***
 
