@@ -12,6 +12,9 @@ Ideally, these would be added as extra machine axes so they could be used along 
     * where A B C D E W X Y Z refer to the corresponding servo, n is the servo position, and T is the time of the move, in seconds. This timing uses the time base of the servo signal period, and is therefore completely isolated from the rest of Grbl's stepper control functions. It more or less does the servo move in the background.
 * M98 - works exactly the same as M97, but instead of starting when the command is issued, it starts with the next G command issued. This makes it possible to (roughly) cordinate motion with a move in the stepper axes (but you need to figure out the correct timings yourself).
 
+The RAMPS 1.4's 4 servo positions are used for 4 of the servos (I moved the spindle control pins to the AUX-3 header) and 4 of the pins on the AUX-4 header. See cpu-map.h and servo.c for details. 
+
+Anything else acts like regular Grbl 5x on a Mega.
 ***
 
 ![GitHub Logo](https://github.com/fra589/grbl-Mega-5X/blob/edge/doc/images/Mega-5X-logo.svg)
