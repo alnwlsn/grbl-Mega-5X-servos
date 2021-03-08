@@ -151,6 +151,7 @@ uint8_t gc_execute_line(char *line)
          NOTE: Modal group numbers are defined in Table 4 of NIST RS274-NGC v3, pg.20 */
 
       case 'G':
+        if(servo.moving==2){servo.moving=1;} //alnwsln hack - if primed, start the servo move on the next G command
         // Determine 'G' command and its modal group
         switch(int_value) {
           case 10: case 28: case 30: case 92:
@@ -276,6 +277,12 @@ uint8_t gc_execute_line(char *line)
               case 7: gc_block.modal.coolant |= COOLANT_MIST_ENABLE; break;
               case 8: gc_block.modal.coolant |= COOLANT_FLOOD_ENABLE; break;
               case 9: gc_block.modal.coolant = COOLANT_DISABLE; break; // M9 disables both M7 and M8.
+            }
+            break;
+          case 96: case 97: case 98: //Alnwlsn hack - servo control m code commands
+            servo.cmdParse=int_value;
+            for(uint8_t i=0; i<numberOfServos; i++){
+              servo.parseInuse[i]=0;
             }
             break;
           #ifdef ENABLE_PARKING_OVERRIDE_CONTROL
@@ -414,6 +421,21 @@ uint8_t gc_execute_line(char *line)
 
     }
   }
+
+  //alnwlsn hack - process the servo options
+  if(servo.cmdParse==96){ //set servo positions "instantly"
+    servoMoveDirect();
+  }
+  if(servo.cmdParse==97){ //move servos to position in certain time
+    servoMoveLinear();
+    servo.moving=1;
+  }
+  if(servo.cmdParse==98){ //same as M97, but instead of starting immediately, starts at the next G command
+    servoMoveLinear();
+    servo.moving=2;
+  }
+  servo.cmdParse=0; 
+
   // Parsing complete!
 
 
