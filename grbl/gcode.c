@@ -302,7 +302,47 @@ uint8_t gc_execute_line(char *line)
 
       // NOTE: All remaining letters assign values.
       default:
-
+        //alnwlsn hack - if the servo command is in play, use that
+        if(servo.cmdParse!=0){
+          switch(letter){
+            case 'A':
+              servo.parseInuse[0]=1;
+              servo.parseValue[0]=value;
+              break;
+            case 'B':
+              servo.parseInuse[1]=1;
+              servo.parseValue[1]=value;
+              break;
+            case 'C':
+              servo.parseInuse[2]=1;
+              servo.parseValue[2]=value;
+              break;
+            case 'D':
+              servo.parseInuse[3]=1;
+              servo.parseValue[3]=value;
+              break;
+            case 'W':
+              servo.parseInuse[4]=1;
+              servo.parseValue[4]=value;
+              break;
+            case 'X':
+              servo.parseInuse[5]=1;
+              servo.parseValue[5]=value;
+              break;
+            case 'Y':
+              servo.parseInuse[6]=1;
+              servo.parseValue[6]=value;
+              break;
+            case 'Z':
+              servo.parseInuse[7]=1;
+              servo.parseValue[7]=value;
+              break;
+            case 'T':
+              servo.parseTime=value;
+              break;
+          }
+          break; //skip the "normal" processing of the rest of the letters
+        }
         /* Non-Command Words: This initial parsing phase only checks for repeats of the remaining
            legal g-code words and stores their value. Error-checking is performed later since some
            words (I,J,K,L,P,R) have multiple connotations and/or depend on the issued commands. */
